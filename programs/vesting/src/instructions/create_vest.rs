@@ -1,4 +1,4 @@
-use anchor_lang::{prelude::*, Discriminator};
+use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
     token_interface::{Mint, TokenAccount, TokenInterface},
@@ -14,11 +14,12 @@ pub struct CreateVest<'info> {
     #[account(
         init,
         payer = owner,
-        space = Vest::DISCRIMINATOR.len() + Vest::INIT_SPACE,
+        space = Vest::MIN_SPACE + company_name.len(),
         seeds = [VEST_SEED, company_name.as_ref()],
         bump,
     )]
     pub vest: Account<'info, Vest>,
+    #[account(mint::token_program = token_program)]
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(
         init,

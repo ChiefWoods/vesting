@@ -1,12 +1,14 @@
-use anchor_lang::prelude::*;
+use anchor_lang::{prelude::*, Discriminator};
 
 #[account]
-#[derive(InitSpace)]
 pub struct Vest {
-    pub bump: u8,
-    pub owner: Pubkey,
-    pub mint: Pubkey,
-    pub treasury: Pubkey,
-    #[max_len(50)]
-    pub company_name: String,
+    pub bump: u8,             // 1
+    pub owner: Pubkey,        // 32
+    pub mint: Pubkey,         // 32
+    pub treasury: Pubkey,     // 32
+    pub company_name: String, // 4
+}
+
+impl Vest {
+    pub const MIN_SPACE: usize = Vest::DISCRIMINATOR.len() + 1 + 32 + 32 + 32 + 4;
 }

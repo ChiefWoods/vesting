@@ -26,6 +26,7 @@ pub struct ClaimTokens<'info> {
         has_one = vest,
     )]
     pub employee: Account<'info, Employee>,
+    #[account(mint::token_program = token_program)]
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(mut)]
     pub treasury: InterfaceAccount<'info, TokenAccount>,
@@ -50,15 +51,12 @@ impl ClaimTokens<'_> {
         require_gte!(now, employee.cliff_time, VestingError::ClaimNotAvailableYet);
 
         let time_since_start = now.saturating_sub(employee.start_time);
-        msg!("time_since_start: {}", time_since_start);
         let total_vesting_time = employee.end_time.saturating_sub(employee.start_time);
-        msg!("total_vesting_time: {}", total_vesting_time);
         let vested_amount = if now >= employee.end_time {
             employee.total_amount
         } else {
             (employee.total_amount * time_since_start) / total_vesting_time
         };
-        msg!("vested_amount: {}", vested_amount);
 
         let claimable_amount = vested_amount.saturating_sub(employee.total_withdrawn);
 
